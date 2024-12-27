@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0; /* Removes default margin */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Ensures full viewport height */
+  background-color: #f3f4f6; /* Light gray background, adjust as needed */
+}
+
+/* If you want to ensure the receipt itself is centered within its container, you might need to adjust the container's styles too */
+.receipt-container {
+  width: 100%; /* Full width of the parent */
+  max-width: 350px; /* Maximum width of your receipt */
+  margin: auto; /* Centers the receipt within the body */
+}
