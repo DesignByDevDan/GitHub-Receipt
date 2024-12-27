@@ -7,6 +7,9 @@ const App = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
+  // Backend URL from environment variable
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001';
+
   const fetchData = async () => {
     if (!username.trim()) {
       setError('Please enter a GitHub username.');
@@ -14,7 +17,7 @@ const App = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5001/api/github/${username}`);
+      const response = await axios.get(`${backendUrl}/api/github/${username}`);
       setData(response.data);
       setError('');
     } catch (err) {

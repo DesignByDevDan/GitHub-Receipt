@@ -6,7 +6,6 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-
 // Middleware
 app.use(cors());
 
@@ -14,19 +13,19 @@ app.use(cors());
 app.get('/api/github/:username', async (req, res) => {
   const username = req.params.username;
 
-  // Include token for authenticated requests
+  // Use GITHUB_TOKEN from environment variables for authenticated requests
   const headers = process.env.GITHUB_TOKEN
     ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
     : {};
 
   try {
-    // Fetch user profile
+    // Fetch user profile from GitHub API
     const userProfile = await axios.get(`https://api.github.com/users/${username}`, { headers });
 
-    // Fetch user repositories
+    // Fetch user repositories from GitHub API
     const userRepos = await axios.get(`https://api.github.com/users/${username}/repos?per_page=100`, { headers });
 
-    // Calculate top language
+    // Calculate top programming language
     const languages = {};
     userRepos.data.forEach((repo) => {
       if (repo.language) {
@@ -36,7 +35,7 @@ app.get('/api/github/:username', async (req, res) => {
 
     const topLanguage = Object.keys(languages).reduce((a, b) => (languages[a] > languages[b] ? a : b), '');
 
-    // Send response
+    // Send JSON response
     res.json({
       profile: userProfile.data,
       repos: userRepos.data,
@@ -44,7 +43,13 @@ app.get('/api/github/:username', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching data from GitHub:', error.message);
-    res.status(500).json({ error: 'Failed to fetch GitHub data' });
+
+    // Handle errors and send appropriate response
+    if (error.response && error.response.status === 404) {
+      res.status(404).json({ error: 'GitHub user not found' });
+    } else {
+      res.status(500).json({ error: 'Failed to fetch GitHub data' });
+    }
   }
 });
 
